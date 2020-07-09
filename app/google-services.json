@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "211510067341",
+    "firebase_url": "https://gideon-fef1e.firebaseio.com",
+    "project_id": "gideon-fef1e",
+    "storage_bucket": "gideon-fef1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211510067341:android:df1e124b0a63dba331e2c4",
+        "android_client_info": {
+          "package_name": "mx.volcanolabs.gideon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "211510067341-4gd0ubj0fbk37qc1nhv7jthfmh7rss3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mx.volcanolabs.gideon",
+            "certificate_hash": "13dab7053ed779097eb89953e1fd353a65b34147"
+          }
+        },
+        {
+          "client_id": "211510067341-186k1ve9rdim68lfq7k16giulq0dala7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2hnsA-oGJ0G5Hhu0qk5fEwasMHZTitlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "211510067341-186k1ve9rdim68lfq7k16giulq0dala7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
