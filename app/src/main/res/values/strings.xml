@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Gideon</string>
+    <string name="login_with_google">Sign in with Google</string>
+    <string name="login_with_email">Sign in with Email</string>
 </resources>

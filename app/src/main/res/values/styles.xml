@@ -7,4 +7,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <style name="ButtonIcon" parent="Widget.MaterialComponents.Button.Icon">
+
+    </style>
+
+    <style name="OutlinedFlatButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="strokeColor">@color/colorPrimary</item>
+    </style>
+
 </resources>
