@@ -10,7 +10,8 @@
     <string name="nav_drawer_close">Navigation drawer open</string>
     <string name="today_tasks">Today\'s Tasks</string>
     <string name="your_groups">Your Groups</string>
-    <string name="add_a_new_group">Add a new Group</string>
+    <string name="add_a_new_group">Add Group</string>
     <string name="name">Name</string>
     <string name="note">Note</string>
+    <string name="save_group">Save Group</string>
 </resources>

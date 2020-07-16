@@ -13,7 +13,16 @@ public class AddGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         view = ActivityAddGroupBinding.inflate(getLayoutInflater());
-        view.btnBack.setOnClickListener(v -> finish());
+        setupEventListeners();
         setContentView(view.getRoot());
+    }
+
+    private void setupEventListeners() {
+        view.btnBack.setOnClickListener(v -> finish());
+        view.btnSaveGroup.setOnClickListener(v -> onSaveGroupClicked());
+    }
+
+    private void onSaveGroupClicked() {
+
     }
 }
