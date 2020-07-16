@@ -6,4 +6,8 @@
     <string name="groups">Groups</string>
     <string name="locations">Locations</string>
     <string name="welcome">Welcome: </string>
+    <string name="nav_drawer_open">Navigation drawer open</string>
+    <string name="nav_drawer_close">Navigation drawer open</string>
+    <string name="today_tasks">Today\'s Tasks</string>
+    <string name="your_groups">Your Groups</string>
 </resources>

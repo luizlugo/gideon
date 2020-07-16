@@ -35,4 +35,12 @@
         app:layout_constraintStart_toStartOf="@id/tv_welcome"
         app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/mono_10" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,5 +2,6 @@
 <resources>
     <dimen name="base_margin">8dp</dimen>
     <dimen name="double_margin">16dp</dimen>
-    <dimen name="triple_margin">32dp</dimen>
+    <dimen name="triple_margin">24dp</dimen>
+    <dimen name="quad_margin">32dp</dimen>
 </resources>
