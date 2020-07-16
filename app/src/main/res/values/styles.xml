@@ -50,4 +50,6 @@
 
     <style name="caption" parent="TextAppearance.MaterialComponents.Caption"></style>
 
+    <style name="OutlinedTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"></style>
+
 </resources>

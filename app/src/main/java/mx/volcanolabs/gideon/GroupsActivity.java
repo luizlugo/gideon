@@ -3,6 +3,7 @@ package mx.volcanolabs.gideon;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,10 +20,16 @@ public class GroupsActivity extends AppCompatActivity {
         view = ActivityGroupsBinding.inflate(getLayoutInflater());
         setContentView(view.getRoot());
         view.btnBack.setOnClickListener(v -> finish());
+        view.btnAdd.setOnClickListener(v -> openAddGroupScreen());
         setupActionBar();
     }
 
     private void setupActionBar() {
         setSupportActionBar(view.toolbar);
+    }
+
+    private void openAddGroupScreen() {
+        Intent addGroup = new Intent(this, AddGroupActivity.class);
+        startActivity(addGroup);
     }
 }
