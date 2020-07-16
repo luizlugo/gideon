@@ -3,12 +3,18 @@ package mx.volcanolabs.gideon;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.View;
 
 import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -17,6 +23,9 @@ import java.util.Arrays;
 import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
+    private Menu menu;
     private ActivityMainBinding view;
     // Firebase authentication
     private FirebaseAuth mFirebaseAuth;
@@ -34,6 +43,20 @@ public class MainActivity extends AppCompatActivity {
 
         setupActionBar();
         checkAuthenticatedUser();
+
+        drawerLayout = view.drawerLayout;
+        navView = view.navView;
+
+        view.btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
     }
 
     @Override

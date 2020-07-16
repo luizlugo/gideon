@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="130dp">
+
+    <ImageView
+        android:id="@+id/iv_user_placeholder"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/double_margin"
+        android:layout_marginTop="@dimen/double_margin"
+        android:src="@drawable/ic_user"
+        android:tint="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_welcome"
+        style="@style/caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_margin"
+        android:text="@string/welcome"
+        app:layout_constraintStart_toStartOf="@id/iv_user_placeholder"
+        app:layout_constraintTop_toBottomOf="@id/iv_user_placeholder" />
+
+    <TextView
+        android:id="@+id/tv_user_name"
+        style="@style/h6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Luis Sergio Lugo Victorino"
+        app:layout_constraintStart_toStartOf="@id/tv_welcome"
+        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

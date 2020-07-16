@@ -11,16 +11,23 @@
     </style>
 
     <style name="Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:height">52dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
     </style>
 
     <style name="ButtonIcon" parent="Widget.MaterialComponents.Button.Icon">
         <item name="android:textColor">@color/colorPrimary</item>
-        <item name="android:height">52dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">52dp</item>
     </style>
 
     <style name="OutlinedFlatButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
         <item name="strokeColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="FlatButton" parent="Button">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="h1" parent="TextAppearance.MaterialComponents.Headline1"></style>
@@ -36,5 +43,11 @@
     <style name="h5" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="h6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="caption" parent="TextAppearance.MaterialComponents.Caption"></style>
 
 </resources>
