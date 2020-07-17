@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
+import mx.volcanolabs.gideon.groups.GroupsActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;

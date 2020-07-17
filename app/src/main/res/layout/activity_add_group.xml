@@ -64,7 +64,9 @@
                 style="@style/OutlinedTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name">
+                android:hint="@string/name"
+                app:errorEnabled="true"
+                app:helperTextEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name"
@@ -86,6 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="textMultiLine"
+                    android:layout_gravity="top"
                     android:overScrollMode="always"
                     android:scrollbarStyle="insideInset"
                     android:scrollbars="vertical" />
@@ -95,11 +98,11 @@
             <Button
                 android:id="@+id/btn_save_group"
                 style="@style/Button"
-                android:text="@string/save_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/base_margin"
-                android:layout_gravity="center_horizontal" />
+                android:text="@string/save_group" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

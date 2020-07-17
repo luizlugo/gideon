@@ -14,4 +14,6 @@
     <string name="name">Name</string>
     <string name="note">Note</string>
     <string name="save_group">Save Group</string>
+    <string name="add_group_name_error">Name should not be empty</string>
+    <string name="add_group_added">Group added successfully</string>
 </resources>

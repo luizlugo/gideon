@@ -1,15 +1,12 @@
-package mx.volcanolabs.gideon;
+package mx.volcanolabs.gideon.groups;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 
 import mx.volcanolabs.gideon.databinding.ActivityGroupsBinding;
-import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
+import mx.volcanolabs.gideon.groups.AddGroupActivity;
 
 public class GroupsActivity extends AppCompatActivity {
     ActivityGroupsBinding view;
