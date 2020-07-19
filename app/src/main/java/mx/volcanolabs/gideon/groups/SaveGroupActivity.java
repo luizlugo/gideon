@@ -1,7 +1,6 @@
 package mx.volcanolabs.gideon.groups;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -10,25 +9,37 @@ import android.text.TextWatcher;
 import android.widget.Toast;
 
 import mx.volcanolabs.gideon.R;
-import mx.volcanolabs.gideon.databinding.ActivityAddGroupBinding;
-import mx.volcanolabs.gideon.viewmodel.AddGroupViewModel;
+import mx.volcanolabs.gideon.databinding.ActivitySaveGroupBinding;
+import mx.volcanolabs.gideon.models.Group;
+import mx.volcanolabs.gideon.viewmodel.SaveGroupViewModel;
 
-public class AddGroupActivity extends AppCompatActivity {
-    ActivityAddGroupBinding view;
-    AddGroupViewModel viewModel;
+public class SaveGroupActivity extends AppCompatActivity {
+    public static final String GROUP_KEY = "group_key";
+    ActivitySaveGroupBinding view;
+    SaveGroupViewModel viewModel;
+    private Group group;
+    private boolean isUpdating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        view = ActivityAddGroupBinding.inflate(getLayoutInflater());
+        view = ActivitySaveGroupBinding.inflate(getLayoutInflater());
         setContentView(view.getRoot());
-        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(AddGroupViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(SaveGroupViewModel.class);
         setupEventListeners();
+
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null && bundle.containsKey(GROUP_KEY) && bundle.getSerializable(GROUP_KEY) != null) {
+            isUpdating = true;
+            group = (Group) bundle.getSerializable(GROUP_KEY);
+            updateExistingGroupInformation();
+        }
     }
 
     private void setupEventListeners() {
         view.btnBack.setOnClickListener(v -> finish());
-        view.btnSaveGroup.setOnClickListener(v -> onSaveGroupClicked());
+        view.btnSave.setOnClickListener(v -> onSaveGroupClicked());
         view.etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -48,7 +59,7 @@ public class AddGroupActivity extends AppCompatActivity {
 
     private void handleNameInputValidations(String name) {
         if (name.isEmpty()) {
-            view.tilName.setError(getString(R.string.add_group_name_error));
+            view.tilName.setError(getString(R.string.name_error));
         } else {
             view.tilName.setError(null);
         }
@@ -59,7 +70,13 @@ public class AddGroupActivity extends AppCompatActivity {
         String note = view.etNote.getText().toString();
 
         if (!name.isEmpty()) {
-            viewModel.saveGroup(name, note);
+            if (isUpdating) {
+                group.setName(name);
+                group.setNote(note);
+                viewModel.updateGroup(group);
+            } else {
+                viewModel.addGroup(name, note);
+            }
         } else {
             handleNameInputValidations(name);
         }
@@ -68,5 +85,10 @@ public class AddGroupActivity extends AppCompatActivity {
     private void onGroupAdded(boolean groupAdded) {
         Toast.makeText(this, R.string.add_group_added, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void updateExistingGroupInformation() {
+        view.etName.setText(group.getName());
+        view.etNote.setText(group.getNote());
     }
 }

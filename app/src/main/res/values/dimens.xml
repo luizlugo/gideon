@@ -4,4 +4,5 @@
     <dimen name="double_margin">16dp</dimen>
     <dimen name="triple_margin">24dp</dimen>
     <dimen name="quad_margin">32dp</dimen>
+    <dimen name="min_button_height">52dp</dimen>
 </resources>

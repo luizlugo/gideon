@@ -16,17 +16,21 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import mx.volcanolabs.gideon.models.Group;
 
-public class AddGroupViewModel extends AndroidViewModel {
+public class SaveGroupViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference groupsDbReference = FirebaseDatabase.getInstance().getReference("Groups");
     public MutableLiveData<Boolean> groupsListener = new MutableLiveData<>();
 
-    public AddGroupViewModel(@NonNull Application application) {
+    public SaveGroupViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public void saveGroup(String name, String note) {
+    public void addGroup(String name, String note) {
         Group group = new Group(name, note);
         groupsDbReference.child(user.getUid()).push().setValue(group).addOnSuccessListener(v -> groupsListener.postValue(true));
+    }
+
+    public void updateGroup(Group group) {
+        groupsDbReference.child(user.getUid()).child(group.getKey()).setValue(group).addOnSuccessListener(v -> groupsListener.postValue(true));
     }
 }

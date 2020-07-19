@@ -1,6 +1,9 @@
 package mx.volcanolabs.gideon.models;
 
-public class Group {
+import java.io.Serializable;
+
+public class Group implements Serializable {
+    private String key;
     private String name;
     private String note;
 
@@ -25,5 +28,13 @@ public class Group {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

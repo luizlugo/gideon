@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
 import mx.volcanolabs.gideon.groups.GroupsActivity;
+import mx.volcanolabs.gideon.locations.LocationsActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void openLocationsScreen() {
-        // TODO: Open locations activity
+        Intent groupsIntent = new Intent(this, LocationsActivity.class);
+        startActivity(groupsIntent);
     }
 }
