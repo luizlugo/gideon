@@ -34,15 +34,18 @@ public class MainViewModel extends AndroidViewModel {
         return taskListener;
     }
 
-    public void filterTasks(String dueDate) {
-        tasksDbReference.orderByChild("dueDate").equalTo(dueDate).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void filterTasks(String dueDate, boolean completed) {
+        tasksDbReference.orderByChild("dueDate").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Task> tasks = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Task task = snapshot.getValue(Task.class);
                     task.setKey(snapshot.getKey());
-                    tasks.add(task);
+
+                    if (task.getDueDate().equals(dueDate) && task.isCompleted() == completed) {
+                        tasks.add(task);
+                    }
                 }
                 taskListener.postValue(tasks);
             }

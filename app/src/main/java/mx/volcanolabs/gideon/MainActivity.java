@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen);
     private String currentDate;
     private TasksListAdapter adapter;
+    private boolean completed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getTasks() {
-        viewModel.filterTasks(currentDate);
+        viewModel.filterTasks(currentDate, completed);
     }
 
     private void openAddTaskScreen() {
