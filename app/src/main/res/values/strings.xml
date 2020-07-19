@@ -15,7 +15,7 @@
     <string name="save_group">Save Group</string>
     <string name="save">Save</string>
     <string name="name_error">Name should not be empty</string>
-    <string name="add_group_added">Group added successfully</string>
+    <string name="add_group_added">Group saved successfully</string>
 
     <!--Locations-->
     <string name="your_locations">Your Locations</string>
@@ -23,4 +23,27 @@
     <string name="address">Address</string>
     <string name="set_as_default_location">Set as default location</string>
     <string name="address_error">Address should not be empty</string>
+    <string name="location_saved">Location saved successfully</string>
+
+    <!-- Tasks -->
+    <string name="save_task">Save Task</string>
+    <string name="description">Description</string>
+    <string name="due_date">Due date</string>
+    <string-array name="priorities">
+        <item name="p1">P1</item>
+        <item name="p2">P2</item>
+        <item name="p3">P3</item>
+        <item name="p4">P4</item>
+    </string-array>
+    <string name="priority">Priority</string>
+    <string name="group">Group</string>
+    <string name="location">Location</string>
+    <string name="want_to_be_notified">Want to be notified when you are near?</string>
+    <string name="description_error">Description should not be empty</string>
+    <string name="due_date_error">Due date should not be empty</string>
+    <string name="priority_error">Priority should not be empty</string>
+    <string name="group_error">Group should not be empty</string>
+    <string name="location_error">Location should not be empty if you want to be notified when you are near</string>
+    <string name="task_added">Task added successfully</string>
+    <string name="no_location">-</string>
 </resources>

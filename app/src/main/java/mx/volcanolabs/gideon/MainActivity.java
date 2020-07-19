@@ -5,12 +5,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -18,13 +21,24 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
 import mx.volcanolabs.gideon.groups.GroupsActivity;
 import mx.volcanolabs.gideon.locations.LocationsActivity;
+import mx.volcanolabs.gideon.models.Task;
+import mx.volcanolabs.gideon.tasks.SaveTaskActivity;
+import mx.volcanolabs.gideon.viewmodel.MainViewModel;
+
+import static mx.volcanolabs.gideon.Constants.due_date_format;
+import static mx.volcanolabs.gideon.Constants.due_date_format_screen;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private MainViewModel viewModel;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private Menu menu;
@@ -34,6 +48,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private final int RC_SIGN_IN = 1903;
     private FirebaseUser user;
+    private final Calendar calendar = Calendar.getInstance();
+    private final int month = calendar.get(Calendar.MONTH);
+    private final int day = calendar.get(Calendar.DAY_OF_MONTH);
+    private final int year = calendar.get(Calendar.YEAR);
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_format);
+    private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen);
+    private String currentDate;
+    private TasksListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +67,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFirebaseAuth = FirebaseAuth.getInstance();
         drawerLayout = view.drawerLayout;
         navView = view.navView;
-
+        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(MainViewModel.class);
         setupActionBar();
         checkAuthenticatedUser();
+        setupListeners();
+        currentDate = dateFormat.format(calendar.getTime());
+        adapter = new TasksListAdapter();
+        view.rvTasks.setAdapter(adapter);
+        getTasks();
+    }
 
+    private void setupListeners() {
         view.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +90,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         navView.setNavigationItemSelectedListener(this);
+        view.btnAddTask.setOnClickListener(v -> openAddTaskScreen());
+        view.btnFilter.setOnClickListener(v -> onFilterClicked());
+        viewModel.getTaskListener().observe(this, this::onTasks);
+    }
+
+    private void onTasks(List<Task> taskList) {
+        adapter.setData(taskList);
+    }
+
+    private void onFilterClicked() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePickerView, int year, int month, int dayOfMonth) {
+                calendar.set(year, month, dayOfMonth);
+                Date selectedDate = calendar.getTime();
+                currentDate = dateFormat.format(selectedDate);
+                updateSelectedDate(dateFormatScreen.format(selectedDate));
+                getTasks();
+            }
+        }, year, month, day);
+        datePickerDialog.show();
+    }
+
+    private void updateSelectedDate(String date) {
+        view.tvDate.setText(date);
+    }
+
+    private void getTasks() {
+        viewModel.filterTasks(currentDate);
+    }
+
+    private void openAddTaskScreen() {
+        Intent addTaskIntent = new Intent(this, SaveTaskActivity.class);
+        startActivity(addTaskIntent);
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +31,7 @@ public class GroupsViewModel extends AndroidViewModel {
         groupsDbReference.child(currentUser.getUid()).addValueEventListener(groupsEventListener);
     }
 
-    public MutableLiveData<List<Group>> getGroupsObserver() {
+    public LiveData<List<Group>> getGroupsObserver() {
         return groupsObserver;
     }
 

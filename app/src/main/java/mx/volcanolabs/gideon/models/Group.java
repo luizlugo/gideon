@@ -1,5 +1,7 @@
 package mx.volcanolabs.gideon.models;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class Group implements Serializable {
@@ -36,5 +38,11 @@ public class Group implements Serializable {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 }

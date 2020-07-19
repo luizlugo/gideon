@@ -1,5 +1,7 @@
 package mx.volcanolabs.gideon.models;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class Location implements Serializable {
@@ -9,6 +11,7 @@ public class Location implements Serializable {
     private Double longitude;
     private String note;
     private boolean isDefaultLocation;
+    private String key;
 
     public Location() {}
 
@@ -67,5 +70,19 @@ public class Location implements Serializable {
 
     public void setDefaultLocation(boolean defaultLocation) {
         isDefaultLocation = defaultLocation;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 }
