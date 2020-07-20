@@ -11,6 +11,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
@@ -37,7 +38,7 @@ import mx.volcanolabs.gideon.viewmodel.MainViewModel;
 import static mx.volcanolabs.gideon.Constants.due_date_format;
 import static mx.volcanolabs.gideon.Constants.due_date_format_screen;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TasksListAdapter.TasksActions {
     private MainViewModel viewModel;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkAuthenticatedUser();
         setupListeners();
         currentDate = dateFormat.format(calendar.getTime());
-        adapter = new TasksListAdapter();
+        adapter = new TasksListAdapter(this);
         view.rvTasks.setAdapter(adapter);
         getTasks();
     }
@@ -173,6 +174,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawers();
         return false;
+    }
+
+    @Override
+    public void onTaskCompletedkClicked(Task task) {
+        task.setCompleted(true);
+        viewModel.updateTask(task);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filter_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupActionBar() {

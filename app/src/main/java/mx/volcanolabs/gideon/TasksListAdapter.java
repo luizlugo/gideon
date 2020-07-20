@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,11 @@ import mx.volcanolabs.gideon.models.Task;
 
 public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.ViewHolder> {
     private List<Task> tasks;
+    private TasksActions listener;
+
+    public TasksListAdapter(TasksActions listener) {
+        this.listener = listener;
+    }
 
     public void setData(List<Task> taskList) {
         tasks = taskList;
@@ -55,6 +62,10 @@ public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.View
         public void bind(Task task) {
             tvDescription.setText(task.getDescription());
             tvGroup.setText(task.getGroup().getName());
+            chxComplete.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+                listener.onTaskCompletedkClicked(task);
+            });
+            chxComplete.setChecked(task.isCompleted());
 
             if (task.getLocation() != null) {
                 tvLocation.setText(task.getLocation().getAddress());
@@ -62,5 +73,9 @@ public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.View
                 tvLocation.setText(R.string.no_location);
             }
         }
+    }
+
+    public interface TasksActions {
+        void onTaskCompletedkClicked(Task task);
     }
 }

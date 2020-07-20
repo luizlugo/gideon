@@ -34,8 +34,12 @@ public class MainViewModel extends AndroidViewModel {
         return taskListener;
     }
 
+    public void updateTask(Task task) {
+        tasksDbReference.child(task.getKey()).setValue(task);
+    }
+
     public void filterTasks(String dueDate, boolean completed) {
-        tasksDbReference.orderByChild("dueDate").addListenerForSingleValueEvent(new ValueEventListener() {
+        tasksDbReference.orderByChild("dueDate").equalTo(dueDate).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Task> tasks = new ArrayList<>();
@@ -43,7 +47,7 @@ public class MainViewModel extends AndroidViewModel {
                     Task task = snapshot.getValue(Task.class);
                     task.setKey(snapshot.getKey());
 
-                    if (task.getDueDate().equals(dueDate) && task.isCompleted() == completed) {
+                    if (task.isCompleted() == completed) {
                         tasks.add(task);
                     }
                 }
