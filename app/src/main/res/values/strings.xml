@@ -46,4 +46,6 @@
     <string name="location_error">Location should not be empty if you want to be notified when you are near</string>
     <string name="task_added">Task added successfully</string>
     <string name="no_location">-</string>
+    <string name="todo">TO-DO</string>
+    <string name="completed">Completed</string>
 </resources>

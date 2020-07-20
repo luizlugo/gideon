@@ -101,7 +101,7 @@ public class SaveLocationActivity extends AppCompatActivity {
         finish();
     }
 
-    private void onAddressClicked() {
+    private void onAddressClicked() {                   
         // Set the fields to specify which types of place data to
         // return after the user has made a selection.
         List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
