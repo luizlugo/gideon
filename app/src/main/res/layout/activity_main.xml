@@ -15,11 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
-                style="@style/Appbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:theme="@style/Appbar"
                 app:contentInsetStart="0dp"
                 app:layout_scrollFlags="enterAlways">
 
@@ -54,6 +54,7 @@
                             style="@style/h6"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textAlignment="center"
                             android:layout_marginStart="@dimen/quad_margin"
                             android:text="@string/today_tasks"
                             android:textColor="@color/white" />
@@ -65,9 +66,8 @@
                             android:src="@drawable/ic_arrow_drop_down"
                             android:tint="@color/white" />
                     </LinearLayout>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView

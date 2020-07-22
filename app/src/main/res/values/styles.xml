@@ -10,8 +10,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="Appbar" parent="Widget.MaterialComponents.Toolbar">
-        <item name="android:textColorPrimary">@color/white</item>
+    <style name="Appbar">
         <item name="colorControlNormal">@color/white</item>
     </style>
 

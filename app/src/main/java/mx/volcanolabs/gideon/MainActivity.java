@@ -69,14 +69,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFirebaseAuth = FirebaseAuth.getInstance();
         drawerLayout = view.drawerLayout;
         navView = view.navView;
-        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(MainViewModel.class);
         setupActionBar();
         checkAuthenticatedUser();
         setupListeners();
         currentDate = dateFormat.format(calendar.getTime());
         adapter = new TasksListAdapter(this);
         view.rvTasks.setAdapter(adapter);
-        getTasks();
     }
 
     private void setupListeners() {
@@ -94,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navView.setNavigationItemSelectedListener(this);
         view.btnAddTask.setOnClickListener(v -> openAddTaskScreen());
         view.btnFilter.setOnClickListener(v -> onFilterClicked());
-        viewModel.getTaskListener().observe(this, this::onTasks);
     }
 
     private void onTasks(List<Task> taskList) {
@@ -232,7 +229,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onSignInInitialized() {
+        initViewModel();
         updateDrawerUserName();
+        // Fetch initial tasks
+        getTasks();
+    }
+
+    private void initViewModel() {
+        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(MainViewModel.class);
+        viewModel.getTaskListener().observe(this, this::onTasks);
     }
 
     private void updateDrawerUserName() {
