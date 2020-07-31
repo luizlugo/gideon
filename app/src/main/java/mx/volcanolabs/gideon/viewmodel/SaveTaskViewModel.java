@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import mx.volcanolabs.gideon.libs.Geofences;
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.models.Task;
@@ -51,12 +53,28 @@ public class SaveTaskViewModel extends AndroidViewModel {
     }
 
     public void addTask(Task task) {
-        tasksDbReference.push().setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                taskListener.postValue(true);
-            }
-        });
+        DatabaseReference databaseReference = tasksDbReference.push();
+        task.setKey(databaseReference.getKey());
+        databaseReference.setValue(task)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if (task.isGeofenceActive()) {
+                            addGeofenceForTask(task);
+                        }
+                        taskListener.postValue(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // TODO: handle write exceptions
+                    }
+                });
+    }
+
+    private void addGeofenceForTask(Task task) {
+        Geofences.addPoint(task.getKey(), task.getLocation());
     }
 
     private class LocationEventListener implements ValueEventListener {
