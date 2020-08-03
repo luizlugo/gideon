@@ -14,6 +14,8 @@ public class Geofences {
                 .setCircularRegion(
                         location.getLatitude(),
                         location.getLongitude(),
+                        // TODO: Change this to be a setting customizable by user
+                        // it could be either at general or task level
                         Constants.geofence_radius_in_meters
                 )
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
