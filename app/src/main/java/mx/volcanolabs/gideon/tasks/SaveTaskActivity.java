@@ -74,10 +74,10 @@ public class SaveTaskActivity extends AppCompatActivity {
 
     private void onSaveClicked() {
         boolean hasError = false;
-        String description = view.etDescription.getText().toString();
-        String dueDate = view.etDueDate.getText().toString();
-        String priority = view.filledPriorityExposedDropdown.getText().toString();
-        String group = view.filledGroupExposedDropdown.getText().toString();
+        String description = view.etDescription.getText() != null ? view.etDescription.getText().toString() : "";
+        String dueDate = view.etDueDate.getText() != null ? view.etDueDate.getText().toString() : "";
+        String priority = view.filledPriorityExposedDropdown.getText() != null ? view.filledPriorityExposedDropdown.getText().toString() : "";
+        String group = view.filledGroupExposedDropdown.getText() != null ? view.filledGroupExposedDropdown.getText().toString() : "";
 
         if (description.isEmpty()) {
             displayDescriptionEmptyError();
@@ -147,25 +147,25 @@ public class SaveTaskActivity extends AppCompatActivity {
     }
 
     private void onGroupsArrived(List<Group> groupList) {
-            ArrayAdapter<Group> adapter =  new ArrayAdapter<>(
-                    this,
-                    R.layout.dropdown_menu_popup_item,
-                    groupList
-            );
-            AutoCompleteTextView groupsDropDown = view.filledGroupExposedDropdown;
-            groupsDropDown.setAdapter(adapter);
-            groupsDropDown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    Group group = (Group) parent.getItemAtPosition(position);
-                    task.setGroup(group);
-                    view.tilGroup.setError(null);
-                }
-            });
+        ArrayAdapter<Group> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.dropdown_menu_popup_item,
+                groupList
+        );
+        AutoCompleteTextView groupsDropDown = view.filledGroupExposedDropdown;
+        groupsDropDown.setAdapter(adapter);
+        groupsDropDown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                Group group = (Group) parent.getItemAtPosition(position);
+                task.setGroup(group);
+                view.tilGroup.setError(null);
+            }
+        });
     }
 
     private void onLocationsArrived(List<Location> locationList) {
-        ArrayAdapter<Location> adapter =  new ArrayAdapter<>(
+        ArrayAdapter<Location> adapter = new ArrayAdapter<>(
                 this,
                 R.layout.dropdown_menu_popup_item,
                 locationList
@@ -238,18 +238,18 @@ public class SaveTaskActivity extends AppCompatActivity {
     private class TaskOnFocusChange implements View.OnFocusChangeListener {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-          switch (v.getId()) {
-              case R.id.et_description:
-                  currentField = view.tilDescription;
-                  break;
-              case R.id.et_due_date:
-                  currentField = view.tilDueDate;
-                  if (hasFocus) {
-                      openDatePicker();
-                      view.etDueDate.clearFocus();
-                  }
-                  break;
-          }
+            switch (v.getId()) {
+                case R.id.et_description:
+                    currentField = view.tilDescription;
+                    break;
+                case R.id.et_due_date:
+                    currentField = view.tilDueDate;
+                    if (hasFocus) {
+                        openDatePicker();
+                        view.etDueDate.clearFocus();
+                    }
+                    break;
+            }
         }
     }
 }
