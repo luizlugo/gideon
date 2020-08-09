@@ -97,8 +97,12 @@ public class SaveLocationActivity extends AppCompatActivity {
     }
 
     private void onLocationSaved(Boolean saved) {
-        Toast.makeText(this, R.string.location_saved, Toast.LENGTH_SHORT).show();
-        finish();
+        if (saved) {
+            Toast.makeText(this, R.string.location_saved, Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Toast.makeText(this, R.string.location_save_error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onAddressClicked() {                   

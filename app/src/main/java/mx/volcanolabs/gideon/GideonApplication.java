@@ -3,8 +3,6 @@ package mx.volcanolabs.gideon;
 import android.app.Application;
 
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.firebase.database.FirebaseDatabase;
 
 import static mx.volcanolabs.gideon.Constants.places_api_key;
 

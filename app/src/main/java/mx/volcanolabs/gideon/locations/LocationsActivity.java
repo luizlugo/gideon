@@ -29,6 +29,11 @@ public class LocationsActivity extends AppCompatActivity implements LocationsAda
         locationsAdapter = new LocationsAdapter(this);
         view.rvLocations.setAdapter(locationsAdapter);
         setupListeners();
+        fetchInitData();
+    }
+
+    private void fetchInitData() {
+        viewModel.getLocations();
     }
 
     private void setupListeners() {

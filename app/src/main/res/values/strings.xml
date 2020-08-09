@@ -25,6 +25,8 @@
     <string name="address_error">Address should not be empty</string>
     <string name="location_saved">Location saved successfully</string>
 
+    <string name="location_save_error">There was an error while trying to save the location, please try it again.</string>
+
     <!-- Tasks -->
     <string name="save_task">Save Task</string>
     <string name="description">Description</string>

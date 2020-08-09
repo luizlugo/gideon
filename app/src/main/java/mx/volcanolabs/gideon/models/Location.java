@@ -12,6 +12,7 @@ public class Location implements Serializable {
     private String note;
     private boolean isDefaultLocation;
     private String key;
+    private String userId;
 
     public Location() {}
 
@@ -78,6 +79,14 @@ public class Location implements Serializable {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @NonNull

@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import mx.volcanolabs.gideon.R;
 import mx.volcanolabs.gideon.databinding.ActivitySaveTaskBinding;
@@ -42,8 +43,8 @@ public class SaveTaskActivity extends AppCompatActivity {
     private final int day = calendar.get(Calendar.DAY_OF_MONTH);
     private final int year = calendar.get(Calendar.YEAR);
     private Task task = new Task();
-    private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen);
-    private SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_format);
+    private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen, Locale.US);
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_format, Locale.US);
     private boolean isUpdating = false;
 
     @Override
@@ -54,6 +55,12 @@ public class SaveTaskActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(SaveTaskViewModel.class);
         setupListeners();
         setupPriorities();
+        fetchInitData();
+    }
+
+    private void fetchInitData() {
+        viewModel.getGroups();
+        viewModel.getLocations();
     }
 
     private void setupListeners() {

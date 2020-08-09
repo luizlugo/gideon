@@ -30,7 +30,13 @@ public class GroupsActivity extends AppCompatActivity implements GroupsListAdapt
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(GroupsViewModel.class);
         adapter = new GroupsListAdapter(this);
         view.rvGroups.setAdapter(adapter);
+
         setupListeners();
+        fetchInitData();
+    }
+
+    private void fetchInitData() {
+        viewModel.getGroups();
     }
 
     private void setupActionBar() {

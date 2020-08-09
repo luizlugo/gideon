@@ -7,15 +7,16 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +28,23 @@ import mx.volcanolabs.gideon.models.Task;
 
 public class SaveTaskViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DatabaseReference tasksDbReference = FirebaseDatabase.getInstance().getReference("Tasks").child(user.getUid());
-    private DatabaseReference groupsDbReference = FirebaseDatabase.getInstance().getReference("Groups").child(user.getUid());
-    private DatabaseReference locationsDbReference = FirebaseDatabase.getInstance().getReference("Locations").child(user.getUid());
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference groupsReference;
+    private CollectionReference locationReference;
+    private CollectionReference taskReference;
     private MutableLiveData<List<Group>> groupsForUser = new MutableLiveData<>();
     private MutableLiveData<List<Location>> locationsForUser = new MutableLiveData<>();
     private MutableLiveData<Boolean> taskListener = new MutableLiveData<>();
 
     public SaveTaskViewModel(@NonNull Application application) {
         super(application);
-        groupsDbReference.addValueEventListener(new GroupsValueEventListener());
-        locationsDbReference.addValueEventListener(new LocationEventListener());
+        groupsReference = db.collection("users")
+                .document(user.getUid())
+                .collection("groups");
+        locationReference = db.collection("users")
+                .document(user.getUid())
+                .collection("locations");
+        taskReference = db.collection("tasks");
     }
 
     public LiveData<List<Group>> getGroupsForUser() {
@@ -53,22 +60,26 @@ public class SaveTaskViewModel extends AndroidViewModel {
     }
 
     public void addTask(Task task) {
-        DatabaseReference databaseReference = tasksDbReference.push();
-        task.setKey(databaseReference.getKey());
-        databaseReference.setValue(task)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        task.setUserId(user.getUid());
+
+        taskReference
+                .add(task)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onSuccess(DocumentReference documentReference) {
+                        task.setKey(documentReference.getId());
+
                         if (task.isGeofenceActive()) {
                             addGeofenceForTask(task);
                         }
+
                         taskListener.postValue(true);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // TODO: handle write exceptions
+                        // TODO: Throw error
                     }
                 });
     }
@@ -77,56 +88,45 @@ public class SaveTaskViewModel extends AndroidViewModel {
         Geofences.addPoint(task.getKey(), task.getLocation());
     }
 
-    private class LocationEventListener implements ValueEventListener {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            List<Location> locations = new ArrayList<>();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Location location = snapshot.getValue(Location.class);
-                location.setKey(snapshot.getKey());
-                locations.add(location);
-            }
-            locationsForUser.postValue(locations);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-        }
+    public void getGroups() {
+        groupsReference
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Group> groups = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Group group = (Group) document.getData();
+                                group.setKey(document.getId());
+                                groups.add(group);
+                            }
+                            groupsForUser.postValue(groups);
+                        } else {
+                            // TODO: Throw error
+                        }
+                    }
+                });
     }
 
-    private class GroupsValueEventListener implements ValueEventListener {
-
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            List<Group> groups = new ArrayList<>();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Group group = snapshot.getValue(Group.class);
-                group.setKey(snapshot.getKey());
-                groups.add(group);
-            }
-            groupsForUser.postValue(groups);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-        }
+    public void getLocations() {
+        locationReference
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Location> locations = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Location location = (Location) document.getData();
+                                location.setKey(document.getId());
+                                locations.add(location);
+                            }
+                            locationsForUser.postValue(locations);
+                        } else {
+                            // TODO: Throw error
+                        }
+                    }
+                });
     }
-
-    private class LocationsValueEventListener implements ValueEventListener {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            List<Location> locations = new ArrayList<>();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Location location = snapshot.getValue(Location.class);
-                location.setKey(snapshot.getKey());
-                locations.add(location);
-            }
-            locationsForUser.postValue(locations);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-        }
-    }
-
 }

@@ -10,6 +10,7 @@ public class Task implements Serializable {
     private String priority;
     private Group group;
     private Location location;
+    private String userId;
     private boolean isGeofenceActive;
     private boolean completed;
 
@@ -88,5 +89,13 @@ public class Task implements Serializable {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
