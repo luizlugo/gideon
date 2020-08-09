@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import mx.volcanolabs.gideon.databinding.ActivityMainBinding;
 import mx.volcanolabs.gideon.groups.GroupsActivity;
@@ -53,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int month = calendar.get(Calendar.MONTH);
     private final int day = calendar.get(Calendar.DAY_OF_MONTH);
     private final int year = calendar.get(Calendar.YEAR);
-    private SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_format);
-    private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen);
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_format, Locale.US);
+    private SimpleDateFormat dateFormatScreen = new SimpleDateFormat(due_date_format_screen, Locale.US);
     private String currentDate;
     private TasksListAdapter adapter;
     private boolean completed = false;

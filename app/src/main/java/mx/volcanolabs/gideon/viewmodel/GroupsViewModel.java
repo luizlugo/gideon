@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mx.volcanolabs.gideon.models.Group;
+import mx.volcanolabs.gideon.models.mappers.GroupMapper;
 
 public class GroupsViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -61,9 +62,7 @@ public class GroupsViewModel extends AndroidViewModel {
 
                         List<Group> groups = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            // Group group = (Group) document.getData();
-                            // group.setKey(document.getId());
-                            // groups.add(group);
+                            groups.add(GroupMapper.transform(document));
                         }
                         groupsObserver.postValue(groups);
                     }

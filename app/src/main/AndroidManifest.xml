@@ -16,7 +16,7 @@
 
         <receiver android:name=".GeofenceBroadcastReceiver" />
 
-        <activity android:name=".tasks.SaveTaskActivity"></activity>
+        <activity android:name=".tasks.SaveTaskActivity" />
         <activity android:name=".locations.SaveLocationActivity" />
         <activity android:name=".locations.LocationsActivity" />
         <activity android:name=".groups.SaveGroupActivity" />

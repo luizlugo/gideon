@@ -25,6 +25,7 @@ import java.util.List;
 
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
+import mx.volcanolabs.gideon.models.mappers.LocationMapper;
 
 public class LocationsViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -67,9 +68,7 @@ public class LocationsViewModel extends AndroidViewModel {
 
                         List<Location> locations = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            Location location = (Location) document.getData();
-                            location.setKey(document.getId());
-                            locations.add(location);
+                            locations.add(LocationMapper.transform(document));
                         }
                         locationsObserver.postValue(locations);
                     }
