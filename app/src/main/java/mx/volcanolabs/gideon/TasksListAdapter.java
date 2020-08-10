@@ -63,7 +63,7 @@ public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.View
             tvDescription.setText(task.getDescription());
             tvGroup.setText(task.getGroup().getName());
             chxComplete.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-                listener.onTaskCompletedkClicked(task);
+                listener.onTaskCompletedClicked(task);
             });
             chxComplete.setChecked(task.isCompleted());
 
@@ -76,6 +76,6 @@ public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.View
     }
 
     public interface TasksActions {
-        void onTaskCompletedkClicked(Task task);
+        void onTaskCompletedClicked(Task task);
     }
 }

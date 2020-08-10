@@ -175,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onTaskCompletedkClicked(Task task) {
-        task.setCompleted(!task.isCompleted());
+    public void onTaskCompletedClicked(Task task) {
+        task.setCompleted(true);
         viewModel.updateTask(task);
     }
 
