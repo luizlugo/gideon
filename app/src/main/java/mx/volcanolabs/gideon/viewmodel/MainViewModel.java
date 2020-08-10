@@ -3,7 +3,6 @@ package mx.volcanolabs.gideon.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,20 +11,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import mx.volcanolabs.gideon.models.Task;
-import mx.volcanolabs.gideon.models.mappers.TaskMapper;
 
 public class MainViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -48,14 +41,17 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void updateTask(Task task) {
-        taskReference.document(task.getKey()).set(task).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
-                if (task.isSuccessful()) {
-                    tasksSourceChanged.setValue(true);
-                }
-            }
-        });
+        taskReference
+                .document(task.getKey())
+                .update("completed", task.isCompleted())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            tasksSourceChanged.setValue(true);
+                        }
+                    }
+                });
     }
 
     public void filterTasks(String dueDate, boolean completed) {
@@ -69,7 +65,7 @@ public class MainViewModel extends AndroidViewModel {
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> queryTask) {
                         List<Task> tasks = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryTask.getResult()) {
-                            Task task = TaskMapper.transform(document);
+                            Task task = document.toObject(Task.class);
                             task.setKey(document.getId());
                             tasks.add(task);
                         }

@@ -63,6 +63,9 @@ public class TasksListAdapter extends RecyclerView.Adapter<TasksListAdapter.View
             tvDescription.setText(task.getDescription());
             tvGroup.setText(task.getGroup().getName());
             chxComplete.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+                if (!buttonView.isPressed()) {
+                    return;
+                }
                 listener.onTaskCompletedClicked(task);
             });
             chxComplete.setChecked(task.isCompleted());

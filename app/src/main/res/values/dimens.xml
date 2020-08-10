@@ -5,4 +5,7 @@
     <dimen name="triple_margin">24dp</dimen>
     <dimen name="quad_margin">32dp</dimen>
     <dimen name="min_button_height">52dp</dimen>
+    <!--elevations-->
+    <dimen name="appbar_elevation">4dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
 </resources>

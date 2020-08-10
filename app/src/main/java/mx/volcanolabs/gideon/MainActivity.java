@@ -2,12 +2,15 @@ package mx.volcanolabs.gideon;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -79,20 +83,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupListeners() {
-        view.btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawers();
-                } else {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
-            }
-        });
-
         navView.setNavigationItemSelectedListener(this);
         view.btnAddTask.setOnClickListener(v -> openAddTaskScreen());
-        view.btnFilter.setOnClickListener(v -> onFilterClicked());
+        // view.btnFilter.setOnClickListener(v -> onFilterClicked());
+    }
+
+    private void handleSideMenu() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+        } else {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 
     private void onTasks(List<Task> taskList) {
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Date selectedDate = calendar.getTime();
                 currentDate = dateFormat.format(selectedDate);
                 updateSelectedDate(dateFormatScreen.format(selectedDate));
+                completed = false;
                 getTasks();
             }
         }, year, month, day);
@@ -114,7 +116,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void updateSelectedDate(String date) {
-        view.tvDate.setText(date);
+        ActionBar ab = getSupportActionBar();
+
+        if (ab != null) {
+            ab.setTitle(date);
+        }
     }
 
     private void getTasks() {
@@ -176,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onTaskCompletedClicked(Task task) {
-        task.setCompleted(true);
+        task.setCompleted(!task.isCompleted());
         viewModel.updateTask(task);
     }
 
@@ -189,13 +195,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.btn_todo) {
-            completed = false;
-        } else if (item.getItemId() == R.id.btn_completed) {
-            completed = true;
+        if (item.getItemId() == android.R.id.home) {
+            handleSideMenu();
+        } else if (item.getItemId() == R.id.filter_date) {
+            onFilterClicked();
+        } else if (item.getItemId() == R.id.filter_status) {
+            showAlertDialogFilterStatus();
         }
-        getTasks();
+
+        /*else if (item.getItemId() == R.id.btn_completed) {
+            completed = true;
+            getTasks();
+        } else if (item.getItemId() == R.id.btn_todo) {
+            completed = false;
+            getTasks();
+        }*/
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAlertDialogFilterStatus() {
+        int selectedOption = completed ? 1 : 0;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle(R.string.filter_tasks_by_status);
+        alertDialog.setSingleChoiceItems(getResources().getStringArray(R.array.status_array), selectedOption, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                completed = (which != 0);
+                getTasks();
+                dialog.dismiss();
+            }
+        });
+        alertDialog.create().show();
     }
 
     private void setupActionBar() {

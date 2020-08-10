@@ -37,6 +37,7 @@
         <item name="p3">P3</item>
         <item name="p4">P4</item>
     </string-array>
+
     <string name="priority">Priority</string>
     <string name="group">Group</string>
     <string name="location">Location</string>
@@ -48,6 +49,10 @@
     <string name="location_error">Location should not be empty if you want to be notified when you are near</string>
     <string name="task_added">Task added successfully</string>
     <string name="no_location">-</string>
-    <string name="todo">TO-DO</string>
-    <string name="completed">Completed</string>
+    <string name="date_range">Filter by Date</string>
+    <string name="filter_tasks_by_status">Filter Tasks</string>
+    <string-array name="status_array">
+        <item name="todo">TO-DO</item>
+        <item name="completed">Completed</item>
+    </string-array>
 </resources>
