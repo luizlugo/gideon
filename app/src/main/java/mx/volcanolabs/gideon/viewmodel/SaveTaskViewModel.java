@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +26,8 @@ import mx.volcanolabs.gideon.libs.Geofences;
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.models.Task;
+import mx.volcanolabs.gideon.models.mappers.GroupMapper;
+import mx.volcanolabs.gideon.models.mappers.LocationMapper;
 
 public class SaveTaskViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -85,7 +88,12 @@ public class SaveTaskViewModel extends AndroidViewModel {
     }
 
     private void addGeofenceForTask(Task task) {
-        Geofences.addPoint(task.getKey(), task.getLocation());
+        Geofences.addPoint(task.getKey(), task.getLocation(), calculateDuration(task.getDueDate()));
+    }
+
+    private long calculateDuration(String dueDate) {
+        // TODO: Calculate the expire time duration base on the due date of the task
+        return Geofence.NEVER_EXPIRE;
     }
 
     public void getGroups() {
@@ -97,7 +105,7 @@ public class SaveTaskViewModel extends AndroidViewModel {
                         if (task.isSuccessful()) {
                             List<Group> groups = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Group group = (Group) document.getData();
+                                Group group = GroupMapper.transform(document);
                                 group.setKey(document.getId());
                                 groups.add(group);
                             }
@@ -118,7 +126,7 @@ public class SaveTaskViewModel extends AndroidViewModel {
                         if (task.isSuccessful()) {
                             List<Location> locations = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Location location = (Location) document.getData();
+                                Location location = LocationMapper.transform(document);
                                 location.setKey(document.getId());
                                 locations.add(location);
                             }

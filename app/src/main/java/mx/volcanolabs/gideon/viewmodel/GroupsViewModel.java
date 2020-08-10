@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,6 +33,7 @@ public class GroupsViewModel extends AndroidViewModel {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private MutableLiveData<List<Group>> groupsObserver = new MutableLiveData<>();
     private CollectionReference groupsReference;
+    private ListenerRegistration groupsListenerRegistration;
 
     public GroupsViewModel(@NonNull Application application) {
         super(application);
@@ -51,7 +53,7 @@ public class GroupsViewModel extends AndroidViewModel {
     }
 
     public void getGroups() {
-        groupsReference
+        groupsListenerRegistration = groupsReference
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -73,5 +75,6 @@ public class GroupsViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         groupsReference = null;
+        groupsListenerRegistration.remove();
     }
 }

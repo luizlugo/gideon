@@ -17,6 +17,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,6 +33,7 @@ public class LocationsViewModel extends AndroidViewModel {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private MutableLiveData<List<Location>> locationsObserver = new MutableLiveData<>();
     private CollectionReference locationsCollection;
+    private ListenerRegistration locationsListenerRegistration;
 
     /**
      * Creates a {@code AndroidViewModelFactory}
@@ -57,7 +59,7 @@ public class LocationsViewModel extends AndroidViewModel {
     }
 
     public void getLocations() {
-        locationsCollection
+        locationsListenerRegistration = locationsCollection
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -79,5 +81,6 @@ public class LocationsViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         locationsCollection = null;
+        locationsListenerRegistration.remove();
     }
 }

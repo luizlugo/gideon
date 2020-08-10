@@ -14,6 +14,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -23,12 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 import mx.volcanolabs.gideon.models.Task;
+import mx.volcanolabs.gideon.models.mappers.TaskMapper;
 
 public class MainViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference taskReference;
     private MutableLiveData<List<Task>> taskListener = new MutableLiveData<>();
+    private ListenerRegistration taskListenerRegistration;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -44,9 +47,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void filterTasks(String dueDate, boolean completed) {
-        taskReference
+        taskListenerRegistration = taskReference
                 .whereEqualTo("dueDate", dueDate)
                 .whereEqualTo("completed", completed)
+                .orderBy("priority")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -57,15 +61,18 @@ public class MainViewModel extends AndroidViewModel {
 
                         List<Task> tasks = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            Task task = (Task) document.getData();
+                            Task task = TaskMapper.transform(document);
                             task.setKey(document.getId());
-
-                            if (task.isCompleted() == completed) {
-                                tasks.add(task);
-                            }
+                            tasks.add(task);
                         }
                         taskListener.postValue(tasks);
                     }
                 });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        taskListenerRegistration.remove();
     }
 }

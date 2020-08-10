@@ -6,8 +6,10 @@ import com.google.android.gms.location.GeofencingRequest;
 import mx.volcanolabs.gideon.Constants;
 import mx.volcanolabs.gideon.models.Location;
 
+import static com.google.android.gms.location.Geofence.NEVER_EXPIRE;
+
 public class Geofences {
-    public static void addPoint(String taskKey, Location location) {
+    public static void addPoint(String taskKey, Location location, long expirationDuration) {
         Geofence geofence = new Geofence
                 .Builder()
                 .setRequestId(taskKey)
@@ -19,6 +21,8 @@ public class Geofences {
                         Constants.geofence_radius_in_meters
                 )
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setLoiteringDelay(60000 * 5) // TODO: Change this to be configured by the user, now 5 minutes delay
+                .setExpirationDuration(expirationDuration)
                 .build();
 
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();

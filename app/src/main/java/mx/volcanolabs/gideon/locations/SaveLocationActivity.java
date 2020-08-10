@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
@@ -30,6 +31,8 @@ import mx.volcanolabs.gideon.R;
 import mx.volcanolabs.gideon.databinding.ActivitySaveLocationBinding;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.viewmodel.SaveLocationViewModel;
+
+import static mx.volcanolabs.gideon.Constants.places_api_key;
 
 public class SaveLocationActivity extends AppCompatActivity {
     public static final String LOCATION_KEY = "location_key";
