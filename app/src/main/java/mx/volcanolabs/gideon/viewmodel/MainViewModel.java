@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -31,7 +32,7 @@ public class MainViewModel extends AndroidViewModel {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference taskReference;
     private MutableLiveData<List<Task>> taskListener = new MutableLiveData<>();
-    private ListenerRegistration taskListenerRegistration;
+    private MutableLiveData<Boolean> tasksSourceChanged = new MutableLiveData<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -42,25 +43,32 @@ public class MainViewModel extends AndroidViewModel {
         return taskListener;
     }
 
+    public LiveData<Boolean> getTaskSourceChanged() {
+        return tasksSourceChanged;
+    }
+
     public void updateTask(Task task) {
-        taskReference.document(task.getKey()).set(task);
+        taskReference.document(task.getKey()).set(task).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                if (task.isSuccessful()) {
+                    tasksSourceChanged.setValue(true);
+                }
+            }
+        });
     }
 
     public void filterTasks(String dueDate, boolean completed) {
-        taskListenerRegistration = taskReference
+        taskReference
                 .whereEqualTo("dueDate", dueDate)
                 .whereEqualTo("completed", completed)
                 .orderBy("priority")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            // TODO: Throw exception
-                            return;
-                        }
-
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> queryTask) {
                         List<Task> tasks = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : value) {
+                        for (QueryDocumentSnapshot document : queryTask.getResult()) {
                             Task task = TaskMapper.transform(document);
                             task.setKey(document.getId());
                             tasks.add(task);
@@ -73,6 +81,5 @@ public class MainViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        taskListenerRegistration.remove();
     }
 }

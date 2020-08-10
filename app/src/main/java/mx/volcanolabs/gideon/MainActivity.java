@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onTaskCompletedkClicked(Task task) {
-        task.setCompleted(true);
+        task.setCompleted(!task.isCompleted());
         viewModel.updateTask(task);
     }
 
@@ -189,6 +189,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.btn_todo) {
+            completed = false;
+        } else if (item.getItemId() == R.id.btn_completed) {
+            completed = true;
+        }
+        getTasks();
         return super.onOptionsItemSelected(item);
     }
 
@@ -239,6 +245,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViewModel() {
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(MainViewModel.class);
         viewModel.getTaskListener().observe(this, this::onTasks);
+        viewModel.getTaskSourceChanged().observe(this, this::doRefresh);
+    }
+
+    private void doRefresh(Boolean refresh) {
+        getTasks();
     }
 
     private void updateDrawerUserName() {
