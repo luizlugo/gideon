@@ -60,17 +60,18 @@ public class MainViewModel extends AndroidViewModel {
                 .whereEqualTo("completed", completed)
                 .orderBy("priority")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> queryTask) {
-                        List<Task> tasks = new ArrayList<>();
+                .addOnCompleteListener(queryTask -> {
+                    List<Task> tasks = new ArrayList<>();
+
+                    if (queryTask.getResult() != null) {
                         for (QueryDocumentSnapshot document : queryTask.getResult()) {
                             Task task = document.toObject(Task.class);
                             task.setKey(document.getId());
                             tasks.add(task);
                         }
-                        taskListener.postValue(tasks);
                     }
+
+                    taskListener.postValue(tasks);
                 });
     }
 

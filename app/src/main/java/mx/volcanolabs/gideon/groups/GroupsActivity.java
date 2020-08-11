@@ -1,10 +1,12 @@
 package mx.volcanolabs.gideon.groups;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,6 @@ public class GroupsActivity extends AppCompatActivity implements GroupsListAdapt
         super.onCreate(savedInstanceState);
         view = ActivityGroupsBinding.inflate(getLayoutInflater());
         setContentView(view.getRoot());
-        view.btnBack.setOnClickListener(v -> finish());
-        view.btnAdd.setOnClickListener(v -> openAddGroupScreen(null));
         setupActionBar();
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(GroupsViewModel.class);
         adapter = new GroupsListAdapter(this);
@@ -33,6 +33,14 @@ public class GroupsActivity extends AppCompatActivity implements GroupsListAdapt
 
         setupListeners();
         fetchInitData();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void fetchInitData() {
@@ -51,6 +59,8 @@ public class GroupsActivity extends AppCompatActivity implements GroupsListAdapt
 
     private void setupListeners() {
         viewModel.getGroupsObserver().observe(this, this::onGroupAdded);
+        // view.btnBack.setOnClickListener(v -> finish());
+        view.btnAdd.setOnClickListener(v -> openAddGroupScreen(null));
     }
 
     private void onGroupAdded(List<Group> groups) {

@@ -7,10 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,13 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
-import mx.volcanolabs.gideon.models.mappers.LocationMapper;
 
 public class LocationsViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -70,7 +63,7 @@ public class LocationsViewModel extends AndroidViewModel {
 
                         List<Location> locations = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            locations.add(LocationMapper.transform(document));
+                            locations.add(document.toObject(Location.class));
                         }
                         locationsObserver.postValue(locations);
                     }

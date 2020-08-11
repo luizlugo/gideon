@@ -26,8 +26,6 @@ import mx.volcanolabs.gideon.libs.Geofences;
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.models.Task;
-import mx.volcanolabs.gideon.models.mappers.GroupMapper;
-import mx.volcanolabs.gideon.models.mappers.LocationMapper;
 
 public class SaveTaskViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -105,7 +103,7 @@ public class SaveTaskViewModel extends AndroidViewModel {
                         if (task.isSuccessful()) {
                             List<Group> groups = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Group group = GroupMapper.transform(document);
+                                Group group = document.toObject(Group.class);
                                 group.setKey(document.getId());
                                 groups.add(group);
                             }
@@ -126,7 +124,7 @@ public class SaveTaskViewModel extends AndroidViewModel {
                         if (task.isSuccessful()) {
                             List<Location> locations = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Location location = LocationMapper.transform(document);
+                                Location location = document.toObject(Location.class);
                                 location.setKey(document.getId());
                                 locations.add(location);
                             }

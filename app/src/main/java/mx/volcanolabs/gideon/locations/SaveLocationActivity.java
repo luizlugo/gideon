@@ -1,5 +1,6 @@
 package mx.volcanolabs.gideon.locations;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,6 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
@@ -59,6 +63,8 @@ public class SaveLocationActivity extends AppCompatActivity {
         } else {
             location = new Location();
         }
+
+        setupActionBar();
     }
 
     @Override
@@ -82,6 +88,27 @@ public class SaveLocationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.btn_save) {
+            onSaveClicked();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupActionBar() {
+        setSupportActionBar(view.toolbar);
+    }
+
     private void populateLocationData() {
         view.etName.setText(location.getName());
         view.etAddress.setText(location.getAddress());
@@ -90,8 +117,6 @@ public class SaveLocationActivity extends AppCompatActivity {
     }
 
     private void setupEventListeners() {
-        view.btnBack.setOnClickListener(v -> finish());
-        view.btnSave.setOnClickListener(v -> onSaveClicked());
         view.etAddress.setOnFocusChangeListener(onFocusChangeListener);
         view.etAddress.addTextChangedListener(new TextFieldValidator());
         view.etName.setOnFocusChangeListener(onFocusChangeListener);

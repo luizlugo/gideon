@@ -3,8 +3,12 @@ package mx.volcanolabs.gideon.groups;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -35,11 +39,28 @@ public class SaveGroupActivity extends AppCompatActivity {
             group = (Group) bundle.getSerializable(GROUP_KEY);
             updateExistingGroupInformation();
         }
+
+        setupActionBar();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.btn_save) {
+            onSaveGroupClicked();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupEventListeners() {
-        view.btnBack.setOnClickListener(v -> finish());
-        view.btnSave.setOnClickListener(v -> onSaveGroupClicked());
         view.etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -63,6 +84,10 @@ public class SaveGroupActivity extends AppCompatActivity {
         } else {
             view.tilName.setError(null);
         }
+    }
+
+    private void setupActionBar() {
+        setSupportActionBar(view.toolbar);
     }
 
     private void onSaveGroupClicked() {

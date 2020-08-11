@@ -1,7 +1,6 @@
 package mx.volcanolabs.gideon.viewmodel;
 
 import android.app.Application;
-import android.media.MediaDrm;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,12 +8,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -26,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mx.volcanolabs.gideon.models.Group;
-import mx.volcanolabs.gideon.models.mappers.GroupMapper;
 
 public class GroupsViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -64,7 +59,7 @@ public class GroupsViewModel extends AndroidViewModel {
 
                         List<Group> groups = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            groups.add(GroupMapper.transform(document));
+                            groups.add(document.toObject(Group.class));
                         }
                         groupsObserver.postValue(groups);
                     }

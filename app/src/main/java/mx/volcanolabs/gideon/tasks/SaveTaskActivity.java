@@ -1,5 +1,6 @@
 package mx.volcanolabs.gideon.tasks;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -7,6 +8,9 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,6 +60,28 @@ public class SaveTaskActivity extends AppCompatActivity {
         setupListeners();
         setupPriorities();
         fetchInitData();
+        setupActionBar();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.btn_save) {
+            onSaveClicked();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupActionBar() {
+        setSupportActionBar(view.toolbar);
     }
 
     private void fetchInitData() {
@@ -64,8 +90,6 @@ public class SaveTaskActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        view.btnBack.setOnClickListener(v -> finish());
-        view.btnSave.setOnClickListener(v -> onSaveClicked());
         view.etDescription.setOnFocusChangeListener(taskOnFocusChange);
         view.etDescription.addTextChangedListener(new TaskTextWatcher());
         view.etDueDate.setOnFocusChangeListener(taskOnFocusChange);

@@ -1,10 +1,13 @@
 package mx.volcanolabs.gideon.locations;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -30,14 +33,26 @@ public class LocationsActivity extends AppCompatActivity implements LocationsAda
         view.rvLocations.setAdapter(locationsAdapter);
         setupListeners();
         fetchInitData();
+        setupActionBar();
     }
 
     private void fetchInitData() {
         viewModel.getLocations();
     }
 
+    private void setupActionBar() {
+        setSupportActionBar(view.toolbar);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setupListeners() {
-        view.btnBack.setOnClickListener(v -> finish());
         view.btnAdd.setOnClickListener(v -> openSaveLocation(null));
         viewModel.getLocationsObserver().observe(this, this::onLocations);
     }
