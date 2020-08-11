@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -25,6 +26,12 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -203,14 +210,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             showAlertDialogFilterStatus();
         }
 
-        /*else if (item.getItemId() == R.id.btn_completed) {
-            completed = true;
-            getTasks();
-        } else if (item.getItemId() == R.id.btn_todo) {
-            completed = false;
-            getTasks();
-        }*/
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -271,6 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateDrawerUserName();
         // Fetch initial tasks
         getTasks();
+        checkFineLocationPermission();
     }
 
     private void initViewModel() {
@@ -297,5 +297,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void openLocationsScreen() {
         Intent groupsIntent = new Intent(this, LocationsActivity.class);
         startActivity(groupsIntent);
+    }
+
+    private void checkFineLocationPermission() {
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                    }
+                })
+                .check();
     }
 }

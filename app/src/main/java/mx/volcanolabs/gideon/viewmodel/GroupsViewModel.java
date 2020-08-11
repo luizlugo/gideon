@@ -59,7 +59,9 @@ public class GroupsViewModel extends AndroidViewModel {
 
                         List<Group> groups = new ArrayList<>();
                         for (QueryDocumentSnapshot document : value) {
-                            groups.add(document.toObject(Group.class));
+                            Group group = document.toObject(Group.class);
+                            group.setKey(document.getId());
+                            groups.add(group);
                         }
                         groupsObserver.postValue(groups);
                     }

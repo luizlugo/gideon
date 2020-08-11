@@ -1,6 +1,7 @@
 package mx.volcanolabs.gideon.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,15 +20,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import mx.volcanolabs.gideon.libs.Geofences;
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.models.Task;
 
+import static mx.volcanolabs.gideon.Constants.due_date_format;
+import static mx.volcanolabs.gideon.Constants.due_date_time_format;
+
 public class SaveTaskViewModel extends AndroidViewModel {
+    private Context context;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupsReference;
@@ -39,6 +48,8 @@ public class SaveTaskViewModel extends AndroidViewModel {
 
     public SaveTaskViewModel(@NonNull Application application) {
         super(application);
+        context = application.getBaseContext();
+
         groupsReference = db.collection("users")
                 .document(user.getUid())
                 .collection("groups");
@@ -86,12 +97,25 @@ public class SaveTaskViewModel extends AndroidViewModel {
     }
 
     private void addGeofenceForTask(Task task) {
-        Geofences.addPoint(task.getKey(), task.getLocation(), calculateDuration(task.getDueDate()));
+        Geofences geofences = new Geofences(context);
+        geofences.addGeofenceReminder(task.getKey(), task.getLocation(), calculateDurationBetweenDates(task.getDueDate()));
     }
 
-    private long calculateDuration(String dueDate) {
-        // TODO: Calculate the expire time duration base on the due date of the task
-        return Geofence.NEVER_EXPIRE;
+    private long calculateDurationBetweenDates(String dueDate) {
+        try {
+            dueDate += " 23:59:59";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_time_format, Locale.US);
+            Date endDate = dateFormat.parse(dueDate);
+            Date today = new Date();
+
+            if (endDate != null) {
+                return endDate.getTime() - today.getTime();
+            } else {
+                return Geofence.NEVER_EXPIRE;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void getGroups() {
