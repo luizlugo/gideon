@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,8 +37,7 @@ import mx.volcanolabs.gideon.models.Task;
 import static mx.volcanolabs.gideon.Constants.due_date_format;
 import static mx.volcanolabs.gideon.Constants.due_date_time_format;
 
-public class SaveTaskViewModel extends AndroidViewModel {
-    private Context context;
+public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListener {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference groupsReference;
@@ -45,10 +46,10 @@ public class SaveTaskViewModel extends AndroidViewModel {
     private MutableLiveData<List<Group>> groupsForUser = new MutableLiveData<>();
     private MutableLiveData<List<Location>> locationsForUser = new MutableLiveData<>();
     private MutableLiveData<Boolean> taskListener = new MutableLiveData<>();
+    private Geofences geofences;
 
     public SaveTaskViewModel(@NonNull Application application) {
         super(application);
-        context = application.getBaseContext();
 
         groupsReference = db.collection("users")
                 .document(user.getUid())
@@ -57,6 +58,8 @@ public class SaveTaskViewModel extends AndroidViewModel {
                 .document(user.getUid())
                 .collection("locations");
         taskReference = db.collection("tasks");
+
+        geofences = new Geofences(getApplication().getBaseContext(), this);
     }
 
     public LiveData<List<Group>> getGroupsForUser() {
@@ -83,21 +86,20 @@ public class SaveTaskViewModel extends AndroidViewModel {
 
                         if (task.isGeofenceActive()) {
                             addGeofenceForTask(task);
+                        } else {
+                            taskListener.postValue(true);
                         }
-
-                        taskListener.postValue(true);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // TODO: Throw error
+                        taskListener.postValue(false);
                     }
                 });
     }
 
     private void addGeofenceForTask(Task task) {
-        Geofences geofences = new Geofences(context);
         geofences.addGeofenceReminder(task.getKey(), task.getLocation(), calculateDurationBetweenDates(task.getDueDate()));
     }
 
@@ -158,5 +160,20 @@ public class SaveTaskViewModel extends AndroidViewModel {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onGeofenceAdded() {
+        taskListener.postValue(true);
+    }
+
+    @Override
+    public void onGeofenceError(Exception exception) {
+
+    }
+
+    @Override
+    public void onPermissionsError() {
+
     }
 }

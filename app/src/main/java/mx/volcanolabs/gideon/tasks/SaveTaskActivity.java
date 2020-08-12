@@ -99,8 +99,12 @@ public class SaveTaskActivity extends AppCompatActivity {
     }
 
     private void onTaskAddedSuccessfully(Boolean added) {
-        finish();
-        Toast.makeText(this, R.string.task_added, Toast.LENGTH_SHORT).show();
+        if (added) {
+            finish();
+            Toast.makeText(this, R.string.task_added, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.task_error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onSaveClicked() {
