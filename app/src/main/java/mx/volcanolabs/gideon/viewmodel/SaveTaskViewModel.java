@@ -45,7 +45,7 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     private CollectionReference taskReference;
     private MutableLiveData<List<Group>> groupsForUser = new MutableLiveData<>();
     private MutableLiveData<List<Location>> locationsForUser = new MutableLiveData<>();
-    private MutableLiveData<Boolean> taskListener = new MutableLiveData<>();
+    private MutableLiveData<CODES> taskListener = new MutableLiveData<>();
     private Geofences geofences;
 
     public SaveTaskViewModel(@NonNull Application application) {
@@ -70,7 +70,7 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
         return locationsForUser;
     }
 
-    public LiveData<Boolean> getTaskListener() {
+    public LiveData<CODES> getTaskListener() {
         return taskListener;
     }
 
@@ -87,14 +87,14 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
                         if (task.isGeofenceActive()) {
                             addGeofenceForTask(task);
                         } else {
-                            taskListener.postValue(true);
+                            taskListener.postValue(CODES.TASK_ADDED);
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        taskListener.postValue(false);
+                        taskListener.postValue(CODES.TASK_ERROR);
                     }
                 });
     }
@@ -163,17 +163,29 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     }
 
     @Override
-    public void onGeofenceAdded() {
-        taskListener.postValue(true);
+    public void onGeofenceListener(Geofences.CODES code) {
+        switch (code) {
+            case GEOFENCE_ADDED:
+                taskListener.postValue(CODES.TASK_ADDED);
+                break;
+            case GEOFENCE_NOT_AVAILABLE:
+                taskListener.postValue(CODES.GEOFENCE_NOT_AVAILABLE);
+                break;
+            case GEOFENCE_TOO_MANY_GEOFENCES:
+                taskListener.postValue(CODES.GEOFENCE_TOO_MANY_GEOFENCES);
+                break;
+            case GEOFENCE_TOO_MANY_PENDING_INTENTS:
+            case GEOFENCE_GENERIC_ERROR:
+                taskListener.postValue(CODES.GEOFENCE_GENERIC_ERROR);
+                break;
+        }
     }
 
-    @Override
-    public void onGeofenceError(Exception exception) {
-
-    }
-
-    @Override
-    public void onPermissionsError() {
-
+    public static enum CODES {
+        TASK_ADDED,
+        TASK_ERROR,
+        GEOFENCE_NOT_AVAILABLE,
+        GEOFENCE_TOO_MANY_GEOFENCES,
+        GEOFENCE_GENERIC_ERROR
     }
 }

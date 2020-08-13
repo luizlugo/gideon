@@ -1,7 +1,7 @@
 package mx.volcanolabs.gideon.viewmodel;
 
+import mx.volcanolabs.gideon.libs.Geofences;
+
 public interface GeofenceListener {
-    void onGeofenceAdded();
-    void onGeofenceError(Exception exception);
-    void onPermissionsError();
+    void onGeofenceListener(Geofences.CODES code);
 }

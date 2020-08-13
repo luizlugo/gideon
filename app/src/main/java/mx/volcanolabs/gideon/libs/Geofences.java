@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
@@ -39,13 +40,25 @@ public class Geofences {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mListener.onGeofenceAdded();
+                            mListener.onGeofenceListener(CODES.GEOFENCE_ADDED);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            mListener.onGeofenceError(e);
+                            if (e instanceof ApiException) {
+                                int errorCode = ((ApiException) e).getStatusCode();
+
+                                if (errorCode == GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE) {
+                                    mListener.onGeofenceListener(CODES.GEOFENCE_NOT_AVAILABLE);
+                                } else if (errorCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES) {
+                                    mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_GEOFENCES);
+                                } else if (errorCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS) {
+                                    mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_PENDING_INTENTS);
+                                }
+                            } else {
+                                mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR);
+                            }
                         }
                     });
         } catch (SecurityException exception) {
@@ -82,5 +95,13 @@ public class Geofences {
         Intent intent = new Intent(mContext, GeofenceBroadcastReceiver.class);
         intent.putExtra(TASK_ID, taskId);
         return PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public static enum CODES {
+        GEOFENCE_ADDED,
+        GEOFENCE_GENERIC_ERROR,
+        GEOFENCE_NOT_AVAILABLE,
+        GEOFENCE_TOO_MANY_GEOFENCES,
+        GEOFENCE_TOO_MANY_PENDING_INTENTS
     }
 }

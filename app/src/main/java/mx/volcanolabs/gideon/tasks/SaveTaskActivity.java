@@ -95,16 +95,35 @@ public class SaveTaskActivity extends AppCompatActivity {
         view.etDueDate.setOnFocusChangeListener(taskOnFocusChange);
         viewModel.getGroupsForUser().observe(this, this::onGroupsArrived);
         viewModel.getLocationsForUser().observe(this, this::onLocationsArrived);
-        viewModel.getTaskListener().observe(this, this::onTaskAddedSuccessfully);
+        viewModel.getTaskListener().observe(this, this::onTaskCodeListener);
     }
 
-    private void onTaskAddedSuccessfully(Boolean added) {
-        if (added) {
-            finish();
-            Toast.makeText(this, R.string.task_added, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, R.string.task_error, Toast.LENGTH_SHORT).show();
+    private void onTaskCodeListener(SaveTaskViewModel.CODES codes) {
+        switch (codes) {
+            case TASK_ADDED:
+                handleTaskAddedSuccessfully();
+                break;
+            case GEOFENCE_NOT_AVAILABLE:
+                displayToastMessage(R.string.geofence_not_available);
+                break;
+            case GEOFENCE_TOO_MANY_GEOFENCES:
+                displayToastMessage(R.string.geofence_too_many_geofences);
+                break;
+            case GEOFENCE_GENERIC_ERROR:
+                displayToastMessage(R.string.geofence_unknown_error);
+                break;
+            default:
+                displayToastMessage(R.string.task_error);
         }
+    }
+
+    private void handleTaskAddedSuccessfully() {
+        finish();
+        displayToastMessage(R.string.task_added);
+    }
+
+    private void displayToastMessage(int stringId) {
+        Toast.makeText(this, stringId, Toast.LENGTH_SHORT).show();
     }
 
     private void onSaveClicked() {
