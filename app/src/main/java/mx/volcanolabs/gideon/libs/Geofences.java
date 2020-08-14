@@ -55,6 +55,8 @@ public class Geofences {
                                     mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_GEOFENCES);
                                 } else if (errorCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS) {
                                     mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_PENDING_INTENTS);
+                                } else {
+                                    mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR);
                                 }
                             } else {
                                 mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR);
