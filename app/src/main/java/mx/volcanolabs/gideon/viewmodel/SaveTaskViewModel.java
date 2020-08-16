@@ -188,4 +188,10 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
         GEOFENCE_TOO_MANY_GEOFENCES,
         GEOFENCE_GENERIC_ERROR
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        geofences = null;
+    }
 }

@@ -11,15 +11,18 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
 
-public class GeofenceBroadcastReceiver extends BroadcastReceiver {
-    private final String TAG = "GeofenceBroadcast";
+import mx.volcanolabs.gideon.services.GeofenceService;
+import timber.log.Timber;
 
+import static mx.volcanolabs.gideon.Constants.TASK_ID;
+
+public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceStatusCodes.getStatusCodeString(geofencingEvent.getErrorCode());
-            Log.e(TAG, errorMessage);
+            Timber.e(errorMessage);
             return;
         }
 
@@ -33,15 +36,13 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             // multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            // Get the transition details as a String.
-            // String geofenceTransitionDetails = getGeofenceTransitionDetails(this, geofenceTransition, triggeringGeofences);
-
-            // Send notification and log the transition details.
-            // sendNotification(geofenceTransitionDetails);
+            for (Geofence geofence : triggeringGeofences) {
+                Intent geofenceService = new Intent(context, GeofenceService.class);
+                geofenceService.putExtra(TASK_ID, geofence.getRequestId());
+                GeofenceService.enqueueWork(context, geofenceService);
+            }
         } else {
-            // Log the error.
-            /*Log.e(TAG, getString(R.string.geofence_transition_invalid_type,
-                    geofenceTransition));*/
+            Timber.e(context.getString(R.string.triggering_geofence_error_broadcast_receiver, geofenceTransition));
         }
 
     }

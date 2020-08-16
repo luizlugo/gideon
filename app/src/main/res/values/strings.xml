@@ -61,4 +61,16 @@
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
+
+    <string name="permissions_not_allowed_error_title">Location permissions required</string>
+    <string name="permissions_not_allowed_error_description">We need to have access to your location all the time cause this is required to be able to set tasks that will notify you when you are near to the place that you want to complete them.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="allow">Allow</string>
+    <string name="cancel">Cancel</string>
+    <string name="task_near_you">Task nearby</string>
+    <string name="tasks_channel_name">Tasks Channel</string>
+    <string name="tasks_channel_description">This channel is to display notifications when you are near by a location where you can complete a task.</string>
+
+    <string name="triggering_geofence_error_broadcast_receiver">There were an error while processing the broadcast receiver, geofence transition: %d</string>
+    <string name="complete">Complete</string>
 </resources>

@@ -20,6 +20,8 @@ import mx.volcanolabs.gideon.GeofenceBroadcastReceiver;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.viewmodel.GeofenceListener;
 
+import static com.google.android.gms.location.Geofence.NEVER_EXPIRE;
+
 public class Geofences {
     private GeofencingClient geofencingClient;
     private Context mContext;
@@ -80,7 +82,7 @@ public class Geofences {
                         Constants.geofence_radius_in_meters
                 )
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
-                .setLoiteringDelay(60000 * 5) // TODO: Change this to be configured by the user, now 5 minutes delay
+                .setLoiteringDelay(15000) // TODO: Change this to be configured by the user, now 5 minutes delay
                 .setExpirationDuration(expirationDuration)
                 .build();
     }
@@ -88,7 +90,7 @@ public class Geofences {
     private GeofencingRequest buildGeofenceRequest(Geofence geofence) {
         return new GeofencingRequest
                 .Builder()
-                .setInitialTrigger(0)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL)
                 .addGeofence(geofence)
                 .build();
     }

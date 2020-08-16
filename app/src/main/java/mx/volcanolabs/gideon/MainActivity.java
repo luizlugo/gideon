@@ -11,9 +11,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,17 +27,24 @@ import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,7 +57,10 @@ import mx.volcanolabs.gideon.locations.LocationsActivity;
 import mx.volcanolabs.gideon.models.Task;
 import mx.volcanolabs.gideon.tasks.SaveTaskActivity;
 import mx.volcanolabs.gideon.viewmodel.MainViewModel;
+import timber.log.Timber;
 
+import static mx.volcanolabs.gideon.Constants.GIDEON_LOCATION_PERMISSION_KEY;
+import static mx.volcanolabs.gideon.Constants.GIDEON_SHARED_PREFERENCES;
 import static mx.volcanolabs.gideon.Constants.due_date_format;
 import static mx.volcanolabs.gideon.Constants.due_date_format_screen;
 
@@ -70,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String currentDate;
     private TasksListAdapter adapter;
     private boolean completed = false;
+    private boolean locationDialogDisplayed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupListeners() {
         navView.setNavigationItemSelectedListener(this);
         view.btnAddTask.setOnClickListener(v -> openAddTaskScreen());
-        // view.btnFilter.setOnClickListener(v -> onFilterClicked());
     }
 
     private void handleSideMenu() {
@@ -270,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateDrawerUserName();
         // Fetch initial tasks
         getTasks();
-        checkFineLocationPermission();
+        checkLocationPermissions();
     }
 
     private void initViewModel() {
@@ -299,23 +313,61 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(groupsIntent);
     }
 
-    private void checkFineLocationPermission() {
+    private void checkLocationPermissions() {
+        ArrayList<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        }
+
         Dexter.withContext(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
+                .withPermissions(permissions)
+                .withListener(new MultiplePermissionsListener() {
                     @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied() && !locationDialogDisplayed) {
+                            displayGoToSettingsDialog();
+                        }
                     }
 
                     @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        displayPermissionNotGrantedError(permissionToken);
                     }
-
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                    public void onError(DexterError dexterError) {
+                        Timber.e(dexterError.toString());
                     }
                 })
                 .check();
     }
+
+    private void displayPermissionNotGrantedError(PermissionToken permissionToken) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.permissions_not_allowed_error_title)
+                .setMessage(R.string.permissions_not_allowed_error_description)
+                .setPositiveButton(R.string.allow, (dialog, which) -> {
+                    permissionToken.continuePermissionRequest();
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void displayGoToSettingsDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.permissions_not_allowed_error_title)
+                .setMessage(R.string.permissions_not_allowed_error_description)
+                .setPositiveButton(R.string.go_to_settings, (dialog, which) -> {
+                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    dialog.dismiss();
+                })
+                .show();
+        locationDialogDisplayed = true;
+    }
+
+
 }

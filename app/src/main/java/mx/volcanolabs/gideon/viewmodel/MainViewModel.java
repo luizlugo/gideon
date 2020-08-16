@@ -1,6 +1,8 @@
 package mx.volcanolabs.gideon.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mx.volcanolabs.gideon.models.Task;
+
+import static mx.volcanolabs.gideon.Constants.GIDEON_LOCATION_PERMISSION_KEY;
+import static mx.volcanolabs.gideon.Constants.GIDEON_SHARED_PREFERENCES;
 
 public class MainViewModel extends AndroidViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
