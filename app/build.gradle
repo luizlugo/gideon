@@ -17,9 +17,19 @@ android {
         resConfigs "en", "es"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("release_keystore.jks")
+            storePassword "Password1"
+            keyAlias "Gideon Release Keystore"
+            keyPassword "Password1"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
