@@ -72,7 +72,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/base_margin"
-                android:hint="@string/priority">
+                android:hint="@string/priority"
+                android:labelFor="@id/filled_priority_exposed_dropdown">
 
                 <AutoCompleteTextView
                     android:id="@+id/filled_priority_exposed_dropdown"
@@ -89,7 +90,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/base_margin"
-                android:hint="@string/group">
+                android:hint="@string/group"
+                android:labelFor="@id/filled_group_exposed_dropdown">
 
                 <AutoCompleteTextView
                     android:id="@+id/filled_group_exposed_dropdown"
@@ -106,7 +108,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/base_margin"
-                android:hint="@string/location">
+                android:hint="@string/location"
+                android:labelFor="@id/filled_location_exposed_dropdown">
 
                 <AutoCompleteTextView
                     android:id="@+id/filled_location_exposed_dropdown"

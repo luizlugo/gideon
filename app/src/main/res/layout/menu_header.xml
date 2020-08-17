@@ -12,9 +12,10 @@
         android:layout_marginStart="@dimen/double_margin"
         android:layout_marginTop="@dimen/double_margin"
         android:src="@drawable/ic_user"
-        android:tint="@color/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/user_profile_image"
+        app:tint="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/tv_welcome"

@@ -35,11 +35,11 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="h1" parent="TextAppearance.MaterialComponents.Headline1"></style>
+    <style name="h1" parent="TextAppearance.MaterialComponents.Headline1" />
 
-    <style name="h2" parent="TextAppearance.MaterialComponents.Headline2"></style>
+    <style name="h2" parent="TextAppearance.MaterialComponents.Headline2" />
 
-    <style name="h3" parent="TextAppearance.MaterialComponents.Headline3"></style>
+    <style name="h3" parent="TextAppearance.MaterialComponents.Headline3" />
 
     <style name="h4" parent="TextAppearance.MaterialComponents.Headline4">
         <item name="android:textColor">@color/colorPrimaryDark</item>
@@ -53,12 +53,12 @@
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="body1" parent="TextAppearance.MaterialComponents.Body1"></style>
+    <style name="body1" parent="TextAppearance.MaterialComponents.Body1" />
 
-    <style name="caption" parent="TextAppearance.MaterialComponents.Caption"></style>
+    <style name="caption" parent="TextAppearance.MaterialComponents.Caption" />
 
-    <style name="OutlinedTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"></style>
+    <style name="OutlinedTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox" />
 
-    <style name="DropDown" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"></style>
+    <style name="DropDown" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu" />
 
 </resources>

@@ -54,6 +54,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
+                        android:contentDescription="@string/empty_content_image"
                         android:src="@drawable/ic_no_events"
                         app:tint="@color/colorPrimary" />
 
