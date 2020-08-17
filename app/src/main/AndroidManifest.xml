@@ -16,7 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".widget.GideonWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
 
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/gideon_widget_info" />
+        </receiver>
         <receiver android:name=".GeofenceBroadcastReceiver" />
         <receiver android:name=".TaskBroadcastReceiver" />
 
@@ -24,11 +32,14 @@
             android:name=".services.GeofenceService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <service
             android:name=".services.CompleteTaskService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".widget.GideonWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity android:name=".tasks.SaveTaskActivity" />
         <activity android:name=".locations.SaveLocationActivity" />
@@ -42,7 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

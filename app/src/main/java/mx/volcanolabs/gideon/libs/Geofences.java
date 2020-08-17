@@ -15,10 +15,15 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import mx.volcanolabs.gideon.Constants;
 import mx.volcanolabs.gideon.GeofenceBroadcastReceiver;
 import mx.volcanolabs.gideon.models.Location;
+import mx.volcanolabs.gideon.models.Task;
 import mx.volcanolabs.gideon.viewmodel.GeofenceListener;
+import timber.log.Timber;
 
 import static com.google.android.gms.location.Geofence.NEVER_EXPIRE;
 
@@ -34,40 +39,62 @@ public class Geofences {
         mListener = listener;
     }
 
-    public void addGeofenceReminder(String taskId, Location location, long expirationDuration) {
+    public void addGeofenceReminder(Task task, long expirationDuration) {
         try {
-            Geofence geofence = buildGeofence(taskId, location.getLatitude(), location.getLongitude(), expirationDuration);
+            String taskId = task.getKey();
+            Location location = task.getLocation();
+            Geofence geofence = buildGeofence(task.getKey(), location.getLatitude(), location.getLongitude(), expirationDuration);
             geofencingClient
                     .addGeofences(buildGeofenceRequest(geofence), getPendingIntent(taskId))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mListener.onGeofenceListener(CODES.GEOFENCE_ADDED);
+                            mListener.onGeofenceListener(CODES.GEOFENCE_ADDED, task);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            CODES geofenceErrorCode = CODES.GEOFENCE_GENERIC_ERROR;
+
                             if (e instanceof ApiException) {
                                 int errorCode = ((ApiException) e).getStatusCode();
 
                                 if (errorCode == GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE) {
-                                    mListener.onGeofenceListener(CODES.GEOFENCE_NOT_AVAILABLE);
+                                    geofenceErrorCode = CODES.GEOFENCE_NOT_AVAILABLE;
                                 } else if (errorCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES) {
-                                    mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_GEOFENCES);
+                                    geofenceErrorCode = CODES.GEOFENCE_TOO_MANY_GEOFENCES;
                                 } else if (errorCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS) {
-                                    mListener.onGeofenceListener(CODES.GEOFENCE_TOO_MANY_PENDING_INTENTS);
-                                } else {
-                                    mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR);
+                                    geofenceErrorCode = CODES.GEOFENCE_TOO_MANY_PENDING_INTENTS;
                                 }
-                            } else {
-                                mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR);
                             }
+
+                            mListener.onGeofenceListener(geofenceErrorCode, task);
                         }
                     });
         } catch (SecurityException exception) {
-            // TODO: Throw error
+            mListener.onGeofenceListener(CODES.GEOFENCE_GENERIC_ERROR, task);
         }
+    }
+
+    public void removeGeofence(Task task) {
+        ArrayList<String> geofences = new ArrayList<>();
+        geofences.add(task.getKey());
+
+        geofencingClient
+                .removeGeofences(geofences)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mListener.onGeofenceListener(CODES.GEOFENCE_REMOVED, task);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Timber.e(e);
+                    }
+                });
     }
 
     private Geofence buildGeofence(String taskKey, Double latitude, Double longitude, long expirationDuration) {
@@ -103,6 +130,7 @@ public class Geofences {
 
     public static enum CODES {
         GEOFENCE_ADDED,
+        GEOFENCE_REMOVED,
         GEOFENCE_GENERIC_ERROR,
         GEOFENCE_NOT_AVAILABLE,
         GEOFENCE_TOO_MANY_GEOFENCES,

@@ -11,10 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,7 +24,6 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,14 +32,11 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,8 +53,7 @@ import mx.volcanolabs.gideon.tasks.SaveTaskActivity;
 import mx.volcanolabs.gideon.viewmodel.MainViewModel;
 import timber.log.Timber;
 
-import static mx.volcanolabs.gideon.Constants.GIDEON_LOCATION_PERMISSION_KEY;
-import static mx.volcanolabs.gideon.Constants.GIDEON_SHARED_PREFERENCES;
+import static mx.volcanolabs.gideon.Constants.DEFAULT_DATE_KEY;
 import static mx.volcanolabs.gideon.Constants.due_date_format;
 import static mx.volcanolabs.gideon.Constants.due_date_format_screen;
 
@@ -99,9 +92,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setupActionBar();
         checkAuthenticatedUser();
         setupListeners();
-        currentDate = dateFormat.format(calendar.getTime());
+
+        Intent intent = getIntent();
+        if (intent.getStringExtra(DEFAULT_DATE_KEY) != null && !intent.getStringExtra(DEFAULT_DATE_KEY).isEmpty()) {
+            handleDefaultDate(intent.getStringExtra(DEFAULT_DATE_KEY));
+        } else {
+            currentDate = dateFormat.format(calendar.getTime());
+        }
+
         adapter = new TasksListAdapter(this);
         view.rvTasks.setAdapter(adapter);
+    }
+
+    private void handleDefaultDate(String date) {
+        try {
+            currentDate = date;
+            Date defaultDate = dateFormat.parse(currentDate);
+            updateSelectedDate(dateFormatScreen.format(currentDate));
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
     }
 
     private void setupListeners() {
@@ -118,7 +128,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onTasks(List<Task> taskList) {
-        adapter.setData(taskList);
+        if (taskList.size() > 0) {
+            view.rvTasks.setVisibility(View.VISIBLE);
+            view.vgEmptyContent.setVisibility(View.GONE);
+            adapter.setData(taskList);
+        } else {
+            view.rvTasks.setVisibility(View.GONE);
+            view.vgEmptyContent.setVisibility(View.VISIBLE);
+            displayEmptyText();
+        }
+    }
+
+    private void displayEmptyText() {
+        if (completed) {
+            view.tvEmptyMessage.setText(R.string.no_tasks_completed);
+        } else {
+            view.tvEmptyMessage.setText(R.string.no_tasks_todo);
+        }
     }
 
     private void onFilterClicked() {

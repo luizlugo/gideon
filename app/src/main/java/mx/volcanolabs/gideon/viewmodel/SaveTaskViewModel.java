@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mx.volcanolabs.gideon.libs.Geofences;
+import mx.volcanolabs.gideon.libs.Utils;
 import mx.volcanolabs.gideon.models.Group;
 import mx.volcanolabs.gideon.models.Location;
 import mx.volcanolabs.gideon.models.Task;
@@ -47,6 +48,7 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     private MutableLiveData<List<Location>> locationsForUser = new MutableLiveData<>();
     private MutableLiveData<CODES> taskListener = new MutableLiveData<>();
     private Geofences geofences;
+    private DocumentReference currentTaskDocument;
 
     public SaveTaskViewModel(@NonNull Application application) {
         super(application);
@@ -75,20 +77,26 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     }
 
     public void addTask(Task task) {
+        currentTaskDocument = taskReference.document();
         task.setUserId(user.getUid());
+        task.setKey(currentTaskDocument.getId());
 
-        taskReference
-                .add(task)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        if (task.isGeofenceActive()) {
+            // Create the geofence, then create the task in firebase
+            geofences.addGeofenceReminder(task, Utils.calculateDurationBetweenDates(task.getDueDate()));
+        } else {
+            addTaskToDatabase(task);
+        }
+    }
+
+    private void addTaskToDatabase(Task task) {
+        currentTaskDocument
+                .set(task)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        task.setKey(documentReference.getId());
-
-                        if (task.isGeofenceActive()) {
-                            addGeofenceForTask(task);
-                        } else {
-                            taskListener.postValue(CODES.TASK_ADDED);
-                        }
+                    public void onSuccess(Void aVoid) {
+                        taskListener.postValue(CODES.TASK_ADDED);
+                        Utils.updateGideonWidgets(getApplication().getBaseContext());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -100,24 +108,7 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     }
 
     private void addGeofenceForTask(Task task) {
-        geofences.addGeofenceReminder(task.getKey(), task.getLocation(), calculateDurationBetweenDates(task.getDueDate()));
-    }
-
-    private long calculateDurationBetweenDates(String dueDate) {
-        try {
-            dueDate += " 23:59:59";
-            SimpleDateFormat dateFormat = new SimpleDateFormat(due_date_time_format, Locale.US);
-            Date endDate = dateFormat.parse(dueDate);
-            Date today = new Date();
-
-            if (endDate != null) {
-                return endDate.getTime() - today.getTime();
-            } else {
-                return Geofence.NEVER_EXPIRE;
-            }
-        } catch (Exception e) {
-            return 0;
-        }
+        geofences.addGeofenceReminder(task, Utils.calculateDurationBetweenDates(task.getDueDate()));
     }
 
     public void getGroups() {
@@ -163,10 +154,10 @@ public class SaveTaskViewModel extends AndroidViewModel implements GeofenceListe
     }
 
     @Override
-    public void onGeofenceListener(Geofences.CODES code) {
+    public void onGeofenceListener(Geofences.CODES code, Task task) {
         switch (code) {
             case GEOFENCE_ADDED:
-                taskListener.postValue(CODES.TASK_ADDED);
+                addTaskToDatabase(task);
                 break;
             case GEOFENCE_NOT_AVAILABLE:
                 taskListener.postValue(CODES.GEOFENCE_NOT_AVAILABLE);

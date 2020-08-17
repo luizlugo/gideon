@@ -19,6 +19,7 @@ import mx.volcanolabs.gideon.TaskBroadcastReceiver;
 import mx.volcanolabs.gideon.models.Task;
 
 import static mx.volcanolabs.gideon.Constants.COMPLETE_TASK;
+import static mx.volcanolabs.gideon.Constants.DEFAULT_DATE_KEY;
 import static mx.volcanolabs.gideon.Constants.NOTIFICATION_ID;
 import static mx.volcanolabs.gideon.Constants.TASK_ID;
 
@@ -48,7 +49,7 @@ public class NotificationsLibrary {
                 .setContentTitle(context.getString(R.string.task_near_you))
                 .setContentText(task.getLocation().getName())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(task.getDescription()))
-                .setContentIntent(getPendingIntent(context))
+                .setContentIntent(getPendingIntent(task, context))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(R.drawable.ic_done, context.getString(R.string.complete), getCompletePendingIntent(notificationId, task.getKey(), context))
                 .setAutoCancel(true);
@@ -62,8 +63,9 @@ public class NotificationsLibrary {
         return PendingIntent.getBroadcast(context, notificationId, completeTaskActionIntent, 0);
     }
 
-    private static PendingIntent getPendingIntent(Context context) {
+    private static PendingIntent getPendingIntent(Task task, Context context) {
         Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(DEFAULT_DATE_KEY, task.getDueDate());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return PendingIntent.getActivity(context, 0, intent, 0);
     }

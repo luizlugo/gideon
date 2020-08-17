@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,21 +21,25 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import mx.volcanolabs.gideon.libs.Geofences;
+import mx.volcanolabs.gideon.libs.Utils;
 import mx.volcanolabs.gideon.models.Task;
 
 import static mx.volcanolabs.gideon.Constants.GIDEON_LOCATION_PERMISSION_KEY;
 import static mx.volcanolabs.gideon.Constants.GIDEON_SHARED_PREFERENCES;
 
-public class MainViewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel implements GeofenceListener {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference taskReference;
     private MutableLiveData<List<Task>> taskListener = new MutableLiveData<>();
     private MutableLiveData<Boolean> tasksSourceChanged = new MutableLiveData<>();
+    private Geofences geofences;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         taskReference = db.collection("tasks");
+        geofences = new Geofences(getApplication().getBaseContext(), this);
     }
 
     public LiveData<List<Task>> getTaskListener() {
@@ -46,6 +51,14 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void updateTask(Task task) {
+        if (task.isCompleted()) {
+            geofences.removeGeofence(task);
+        } else {
+            geofences.addGeofenceReminder(task, Utils.calculateDurationBetweenDates(task.getDueDate()));
+        }
+    }
+
+    private void changeTaskStatus(Task task) {
         taskReference
                 .document(task.getKey())
                 .update("completed", task.isCompleted())
@@ -54,6 +67,7 @@ public class MainViewModel extends AndroidViewModel {
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
                         if (task.isSuccessful()) {
                             tasksSourceChanged.setValue(true);
+                            Utils.updateGideonWidgets(getApplication().getBaseContext());
                         }
                     }
                 });
@@ -83,5 +97,12 @@ public class MainViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+    }
+
+    @Override
+    public void onGeofenceListener(Geofences.CODES code, Task task) {
+        if (code.equals(Geofences.CODES.GEOFENCE_REMOVED) || code.equals(Geofences.CODES.GEOFENCE_ADDED)) {
+            changeTaskStatus(task);
+        }
     }
 }

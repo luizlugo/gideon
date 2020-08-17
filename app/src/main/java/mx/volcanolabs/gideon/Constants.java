@@ -11,4 +11,5 @@ public class Constants {
     public static final String TASK_ID = "taskId";
     public static final String COMPLETE_TASK = "completeTask";
     public static final String NOTIFICATION_ID = "notificationId";
+    public static final String DEFAULT_DATE_KEY = "defaultDateKey";
 }

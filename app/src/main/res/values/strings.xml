@@ -56,7 +56,7 @@
         <item name="todo">TO-DO</item>
         <item name="completed">Completed</item>
     </string-array>
-    
+
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
@@ -73,4 +73,11 @@
 
     <string name="triggering_geofence_error_broadcast_receiver">There were an error while processing the broadcast receiver, geofence transition: %d</string>
     <string name="complete">Complete</string>
+
+    <string name="no_tasks_completed">There are not tasks completed for this day, Let\'s go to complete one!</string>
+    <string name="no_tasks_todo">There are not pending tasks to complete for this day, Great job!</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="loading">There are not pending tasks</string>
+
 </resources>
